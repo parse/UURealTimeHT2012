@@ -1,14 +1,13 @@
 with Ada.Text_IO;
-	use Ada.Text_IO;
+use Ada.Text_IO;
 
 with Ada.Calendar;
-	use Ada.Calendar;
+use Ada.Calendar;
 
-with Ada.Numerics.Discrete_Random;
-	use Ada.Numerics.Discrete_Random;
+with Ada.Numerics.Float_Random;
+use Ada.Numerics.Float_Random;
 
 procedure part3 is
-	
 	-- BufferTask
 	task BufferTask is
 		entry Init;
@@ -17,32 +16,60 @@ procedure part3 is
 	end BufferTask;
 
 	task body BufferTask is
-		buffer : Array(1..10) of Integer;
-		firstItem : Integer := -1;
+		buffer : Array(0..10) of Integer;
+		firstItem : Integer := 0;
 		lastItem : Integer := 0;
-	begin 
+		itemCount : Integer := 0;
+		
+		function isFull return Boolean is
+		begin
+			return (lastItem + 1) mod 10 = firstItem;
+		end;
+
+		function isEmpty return Boolean is
+		begin
+			return firstItem = lastItem;
+		end;
+
+		function getItemCount return Integer is
+		begin
+			return itemCount;
+		end;
+
+		procedure enqueue(value : in Integer) is
+		begin
+			if not isFull then
+				buffer(lastItem) := value;
+				lastItem := (lastItem + 1) mod 10;
+				itemCount := itemCount + 1;
+			end if;
+			-- Put_Line("Items in queue:" & Integer'Image(getItemCount));
+		end;
+
+		procedure dequeue(value : out Integer) is
+		begin
+			if not isEmpty then
+				value := buffer(firstItem);
+				firstItem := (firstItem + 1) mod 10;
+				itemCount := itemCount - 1;
+			end if;
+			-- Put_Line("Items in queue:" & Integer'Image(getItemCount));
+		end;
+
+	begin
 		accept Init;
 		loop
-			select	
-				accept Put(item : in Integer) do
-					if (((lastItem + 1) mod 10) /= firstItem) then
-						lastItem := lastItem + 1;
-						if (firstItem = -1) then
-							firstItem := lastItem;
-						end if;
-
-						buffer(lastItem) := item;
-						Put_Line("Buffer Put");
-					end if;
-				end Put;
+			select
+				when not isFull =>
+					accept Put(item : in Integer) do
+						enqueue(item);
+					end Put;
 			or
-				accept Get(item : out Integer) do
-					item := buffer(firstItem);
-					Put_Line("Buffer Get");
-				end Get;
+				when not isEmpty =>
+					accept Get(item : out Integer) do
+						dequeue(item);
+					end Get;
 			end select;
-			
-
 		end loop;
 	end BufferTask;
 
@@ -55,34 +82,38 @@ procedure part3 is
 		g : generator;
 		num : Integer range 0 .. 25;
 	begin 
+		Reset(g);
 		accept Init;
 		loop
-			Reset(g);
-			num := Random(g);
+			delay Duration(Random(g) * 1.0);
+			num := Integer(Random(g) * 25.0);
 			BufferTask.Put(num);
-			Put("Put");
-			Put_Line(Integer'Image(num));
+			Put_Line("Put:" & Integer'Image(num));
 		end loop;
-		
 	end PutterTask;
 
-		-- GetterTask
+	-- GetterTask
 	task GetterTask is
 		entry Init;
 	end GetterTask;
 
 	task body GetterTask is
+		g : Generator;
 		value : Integer := 0;
-	begin 
-		Put_Line("Get before init");
+		sum : Integer := 0;
+	begin
+		Reset(g);
 		accept Init;
 		loop
+			delay Duration(Random(g) * 2.0);
 			BufferTask.Get(value);
-			Put("Get");
-			Put_Line(Integer'Image(value));	
+			sum := sum + value;
+			Put_Line("Get:" & Integer'Image(value) & " sum:" & Integer'Image(sum));
+			
+			if sum > 100 then
+				Put_Line("Jesus-titty-fucking-christ I've reached ONE_HUNDRED!");
+			end if;
 		end loop;
-		
-
 	end GetterTask;
 
 begin

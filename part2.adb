@@ -30,7 +30,6 @@ procedure part2 is
 				delay until Clock + 0.5;
 				Put_Line("F3 missed deadline, RESYNC");
 				accept F3Done;
-
 			end select;
 
 		end loop;
@@ -40,7 +39,7 @@ procedure part2 is
 	procedure F1 is
 		now : constant Time := Clock;
 	begin 
-		Put("F1 started at: ");
+		Put("F1 started at:");
 		Put_Line(Duration'Image(now-start));
 	end F1;
 
@@ -48,7 +47,7 @@ procedure part2 is
 	procedure F2 is
 		now : constant Time := Clock;
 	begin 
-		Put("F2 started at: ");
+		Put("F2 started at:");
 		Put_Line(Duration'Image(now-start));
 	end F2;
 
@@ -56,14 +55,14 @@ procedure part2 is
 	procedure F3 is
 		now : constant Time := Clock;
 		g : generator ;
-		num : Float range 0.0 .. 3.0;
+		num : Float;
 	begin 
 		Watchdog.Init;
 		Reset(g);
-		num := Random(g);
+		num := Random(g) * 2.0;
 
-		Put("F3 started at: " & Duration'Image(now-start));
-		Put_Line(" with delay: " & Float'Image(num));
+		Put("F3 started at:" & Duration'Image(now-start));
+		Put_Line(" with delay:" & Float'Image(num));
 		
 		delay Duration(num);
 		Watchdog.F3Done;
@@ -83,7 +82,6 @@ begin
 			runF3 := False;
 
 			if f3EndTime - loopStartTime > 1.0 then
-				Put_Line("DIFFTIME: " & Duration'Image(f3EndTime - loopStartTime));
 				loopStartTime := loopStartTime + Duration(Float'Floor(Float(f3EndTime - loopStartTime)));
 			end if;
 		else
