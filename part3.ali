@@ -1,0 +1,99 @@
+V "GNAT Lib v4.5"
+M P W=b
+P SS ZX
+R nnnnnvvnnnnnnnnvnnvnnnvnvvnnvnnnnnnnnnnvnvnnnnvnvnnnnnnvnnnnnnnnnnv2nv3nv1+nnnnnn
+
+U part3%b		part3.adb		5e887bea NE OO SU IL
+W ada%s			ada.ads			ada.ali
+W ada.calendar%s	a-calend.adb		a-calend.ali
+W ada.numerics%s	a-numeri.ads		a-numeri.ali
+W ada.numerics.float_random%s  a-nuflra.adb	a-nuflra.ali
+W ada.real_time%s	a-reatim.adb		a-reatim.ali
+W ada.tags%s		a-tags.adb		a-tags.ali
+W ada.text_io%s		a-textio.adb		a-textio.ali
+W system%s		system.ads		system.ali
+W system.img_int%s	s-imgint.adb		s-imgint.ali
+W system.parameters%s	s-parame.adb		s-parame.ali
+W system.soft_links%s	s-soflin.adb		s-soflin.ali
+W system.task_info%s	s-tasinf.adb		s-tasinf.ali
+W system.tasking%s	s-taskin.adb		s-taskin.ali
+W system.tasking.rendezvous%s  s-tasren.adb	s-tasren.ali
+W system.tasking.stages%s  s-tassta.adb		s-tassta.ali
+
+D ada.ads		20070406091342 9c7dd3ea
+D a-calend.ads		20090409150019 19486c30
+D a-except.ads		20090727140100 34786013
+D a-finali.ads		20090409150019 bfd2ca79
+D a-filico.ads		20090409150019 4ff02a40
+D a-ioexce.ads		20091130110856 2504b9d2
+D a-numeri.ads		20080324174807 1cf3e608
+D a-nuflra.ads		20090409150019 3fd6d45e
+D a-reatim.ads		20090409150019 7c462ab4
+D a-stream.ads		20090409150019 34aca5be
+D a-tags.ads		20090409150019 bfa07446
+D a-textio.ads		20091028140912 7065b2f2
+D a-unccon.ads		20070406091342 51e09df2
+D interfac.ads		20090409150019 a69cad5c
+D i-c.ads		20070406091342 bc3ef662
+D i-cstrea.ads		20090409150019 e1e064a9
+D part3.adb		20120918094459 08737176
+D system.ads		20090410155748 6386a726
+D s-atacco.ads		20090409150019 60789a20
+D s-crtl.ads		20091130102047 bf835650
+D s-exctab.ads		20090417131547 4b7fd51d
+D s-ficobl.ads		20090409150019 8bb681e5
+D s-finimp.ads		20090409150019 90fd9896
+D s-finroo.ads		20090409150019 1408f9d1
+D s-imgint.ads		20090409150019 f77d133c
+D s-osinte.ads		20091123145658 3e4085c2
+D s-parame.ads		20091130110856 6cdeed25
+D s-secsta.ads		20090707124243 d2c357fb
+D s-soflin.ads		20090729085153 61e5c9e8
+D s-stache.ads		20090417130712 481f9e9d
+D s-stausa.ads		20090429103053 146a8ff1
+D s-stalib.ads		20090422095703 9cbc334a
+D s-stoele.ads		20090417130712 a4d57c26
+D s-stoele.adb		20090417130712 49ef69d7
+D s-stratt.ads		20090409150019 fef7c1da
+D s-tasinf.ads		20090409150019 1b1e3257
+D s-taspri.ads		20090409150019 20740433
+D s-taprop.ads		20090409150019 25a7965c
+D s-taskin.ads		20090707124243 78c4deed
+D s-taprob.ads		20090409150019 5e00115c
+D s-tpoben.ads		20090409150019 18aadfe3
+D s-tasren.ads		20090409150019 5bda31d2
+D s-tassta.ads		20090409150019 71d2b71d
+D s-traent.ads		20090417130712 a66ef260
+D s-unstyp.ads		20090409150019 c0f9fae5
+D s-wchcon.ads		20090417130712 30c48dc1
+X 1 ada.ads
+16K9*Ada 19e8 17|1r6 2r13 4r6 5r13 7r6 8r13
+X 2 a-calend.ads
+36K13*Calendar 358e17 17|4w10 5r17
+X 7 a-numeri.ads
+16K13*Numerics 32e17 17|7r10 8r17
+X 8 a-nuflra.ads
+48K22*Float_Random 99e30 17|7w19 8r26
+X 12 a-textio.ads
+49K13*Text_IO 472e16 17|1w10 2r17
+243U14*Put 17|58r17 74r17
+264U14*Put_Line 17|35r49 41r41 59r17 71r17 75r17
+X 17 part3.adb
+10U11*part3 10b11 83l5 83t10
+13t14 BufferTask 19b19 47l13 47t23 57r17 73r17 80r9
+14Y23 Init 24b24 80r20
+15Y23 Put 15>27 27b40 37l37 37t40 57r28
+15i27 item{integer} 34r69
+16Y23 Get 16<27 39b40 42l37 42t40 73r28
+16i27 item{integer} 40m41
+20a17 buffer(integer) 34m49 40r49
+21i17 firstItem{integer} 28r72 30r53 31m57 40r56
+22i17 lastItem{integer} 28r47 29m49 29r61 31r70 34r56
+27i44 item{integer}
+39i44 item{integer}
+50t14 PutterTask 54b19 61l13 61t23 81r9
+51Y23 Init 56b24 81r20
+64t14 GetterTask 68b19 77l13 77t23 82r9
+65Y23 Init 72b24 82r20
+69i17 value{integer} 73m32 75r40
+
