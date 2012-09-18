@@ -9,13 +9,9 @@ with Ada.Numerics.Float_Random;
 
 procedure part2 is
 	start : constant Time := Clock;
+	loopStartTime : Time := start;
 	runF3 : Boolean := False;
-	F3StartTime : Time;
 	F3EndTime : Time;
-	loopStartTime : Time;
-	iterations : Integer := 0;
-	delayFlag : Boolean := False;
-	delayTime : Duration;
 
 	-- Task Watchdog
 	task Watchdog is
@@ -34,7 +30,6 @@ procedure part2 is
 				delay until Clock + 0.5;
 				Put_Line("F3 missed deadline, RESYNC");
 				accept F3Done;
-				-- starta återsynk
 
 			end select;
 
@@ -60,63 +55,43 @@ procedure part2 is
 	-- Task F3
 	procedure F3 is
 		now : constant Time := Clock;
-		
 		g : generator ;
-		num : float range 0.0 .. 1.0;
+		num : Float range 0.0 .. 3.0;
 	begin 
+		Watchdog.Init;
 		Reset(g);
 		num := Random(g);
 
-		if (num > 0.5) then
-			delay until Clock + 0.6;
-			--Put("F3 random delayed");
-			--Put_Line(Float'Image(num));
-
-		end if;
-
-		Put("F3 started at: ");
-		Put_Line(Duration'Image(now-start));
+		Put("F3 started at: " & Duration'Image(now-start));
+		Put_Line(" with delay: " & Float'Image(num));
+		
+		delay Duration(num);
 		Watchdog.F3Done;
 	end F3;
 	
 -- Main block
 begin
 	loop
-		loopStartTime := Clock;
-		
 		F1;
 		F2;
 
 		if (runF3) then
 			delay until loopStartTime + 0.5;
 
-			Watchdog.Init;
-			F3StartTime := Clock;
 			F3;
 			F3EndTime := Clock;
-			iterations := iterations + 1;
 			runF3 := False;
+
+			if f3EndTime - loopStartTime > 1.0 then
+				Put_Line("DIFFTIME: " & Duration'Image(f3EndTime - loopStartTime));
+				loopStartTime := loopStartTime + Duration(Float'Floor(Float(f3EndTime - loopStartTime)));
+			end if;
 		else
 			runF3 := True;
 		end if;
 
-		if (F3EndTime - F3StartTime > 0.5) then
-			delayTime := Clock - Clock;
-			loop
-				if (delayTime < F3EndTime - loopStartTime) then
-					delayTime := delayTime + 1.0;
-				else 
-					exit;
-				end if;
-
-			end loop;
-			--Put_Line(Duration'Image(delayTime));
-			--Put_Line(Duration'Image(F3EndTime - F3StartTime));
-			delay until loopStartTime + delayTime;
-		else 
-			delay until loopStartTime + 1.0;
-		end if;
-
+		loopStartTime := loopStartTime + 1.0;
+		delay until loopStartTime;
 
 	end loop;
 end part2;
