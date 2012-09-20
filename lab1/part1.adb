@@ -1,3 +1,5 @@
+-- Lab 1: Anders Hassis,  Ludvig Norinder & Oskar Wirén
+
 with Ada.Text_IO;
 use Ada.Text_IO;
 
@@ -31,10 +33,13 @@ procedure part1 is
 	end F3;
 begin
 	loop
+		-- Kick off F1 and F2
 		F1;
 		F2;
 
+		-- Check if F3 is running, F3 will only run every other time
 		if runF3 then
+			-- Start F3 after 0.5 seconds
 			delay until loopStartTime + 0.5;
 			F3;
 			runF3 := False;
@@ -42,6 +47,7 @@ begin
 			runF3 := True;
 		end if;
 
+		-- Run loop again after 1 second
 		loopStartTime := loopStartTime + 1.0;
 		delay until loopStartTime;
 

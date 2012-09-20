@@ -1,3 +1,5 @@
+-- Lab 1: Anders Hassis,  Ludvig Norinder & Oskar Wirén
+
 with Ada.Text_IO;
 use Ada.Text_IO;
 
@@ -29,21 +31,25 @@ procedure part3 is
 		itemCount : Integer := 0;
 		finished : Boolean := false;
 		
+		-- Check if buffer is full
 		function isFull return Boolean is
 		begin
 			return (lastItem + 1) mod 10 = firstItem;
 		end;
 
+		-- Check if buffer is empty
 		function isEmpty return Boolean is
 		begin
 			return firstItem = lastItem;
 		end;
 
+		-- Return amount of items in buffer
 		function getItemCount return Integer is
 		begin
 			return itemCount;
 		end;
 
+		-- Enqueue element into buffer
 		procedure enqueue(value : in Integer) is
 		begin
 			if not isFull then
@@ -54,6 +60,7 @@ procedure part3 is
 			-- Put_Line("Items in queue:" & Integer'Image(getItemCount));
 		end;
 
+		-- Dequeue element from buffer
 		procedure dequeue(value : out Integer) is
 		begin
 			if not isEmpty then
@@ -66,6 +73,8 @@ procedure part3 is
 
 	begin
 		accept Init;
+
+		-- Loop until GetterTask indicates by setting finished = true
 		while not finished loop
 			select
 				when not isFull =>
@@ -95,12 +104,15 @@ procedure part3 is
 	begin 
 		Reset(g);
 		accept Init;
+
+		-- Loop until BufferTask indicates by setting finished = true
 		while not finished loop
 			select
 				accept Finish do
 					finished := true;
 				end Finish;
 			or
+				-- Delay between 0 and 1 second
 				delay Duration(Random(g) * 1.0);
 				num := Integer(Random(g) * 25.0);
 				BufferTask.Put(num);
@@ -122,6 +134,8 @@ procedure part3 is
 	begin
 		Reset(g);
 		accept Init;
+
+		-- Run until sum is > 100
 		while sum < 100 loop
 			delay Duration(Random(g) * 2.0);
 			BufferTask.Get(value);
@@ -129,6 +143,7 @@ procedure part3 is
 			Put_Line("Get:" & Integer'Image(value) & ", Sum:" & Integer'Image(sum));
 		end loop;
 
+		-- Notify the buffer that we are done
 		BufferTask.Finish;
 		Put_Line("Gettertask is quitting");
 	end GetterTask;

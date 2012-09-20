@@ -1,3 +1,5 @@
+-- Lab 1: Anders Hassis,  Ludvig Norinder & Oskar Wirén
+
 with Ada.Text_IO;
 	use Ada.Text_IO;
 
@@ -24,6 +26,7 @@ procedure part2 is
 		loop
 			accept Init;
 
+			-- Either F3 is done or F3 missed its deadline
 			select
 				accept F3Done;
 			or
@@ -64,6 +67,7 @@ procedure part2 is
 		Put("F3 started at:" & Duration'Image(now-start));
 		Put_Line(" with delay:" & Float'Image(num));
 		
+		-- Delay a random amount of seconds and signal the Watchdog that F3 is done
 		delay Duration(num);
 		Watchdog.F3Done;
 	end F3;
@@ -71,9 +75,12 @@ procedure part2 is
 -- Main block
 begin
 	loop
+
+		-- Fire off F1 and F2
 		F1;
 		F2;
 
+		-- Check if F3 is going to run and start F3 after 0.5 seconds
 		if (runF3) then
 			delay until loopStartTime + 0.5;
 
@@ -81,6 +88,7 @@ begin
 			F3EndTime := Clock;
 			runF3 := False;
 
+			-- If F3 took more than 1 second to run, find next even second for resyncing
 			if f3EndTime - loopStartTime > 1.0 then
 				loopStartTime := loopStartTime + Duration(Float'Floor(Float(f3EndTime - loopStartTime)));
 			end if;
@@ -88,6 +96,7 @@ begin
 			runF3 := True;
 		end if;
 
+		-- Since we used floor above, we add 1 second to our loop start time
 		loopStartTime := loopStartTime + 1.0;
 		delay until loopStartTime;
 

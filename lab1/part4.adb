@@ -10,6 +10,7 @@ use Ada.Numerics.Float_Random;
 
 procedure part4 is
 
+	-- Define type for buffer
 	type BufferType is Array(0..10) of Integer;
 
 	-- BufferTask Header
@@ -34,21 +35,25 @@ procedure part4 is
 
 	-- BufferTask Body
 	protected body BufferTask is
+		-- Check if buffer is full
 		function isFull return Boolean is
 		begin
 			return (lastItem + 1) mod 10 = firstItem;
 		end;
 
+		-- Check if buffer is empty
 		function isEmpty return Boolean is
 		begin
 			return firstItem = lastItem;
 		end;
 
+		-- Return amount of elements in buffer
 		function getItemCount return Integer is
 		begin
 			return itemCount;
 		end;
 
+		-- Enqueue item into queue
 		procedure enqueue(value : in Integer) is
 		begin
 			if not isFull then
@@ -59,6 +64,7 @@ procedure part4 is
 			-- Put_Line("Items in queue:" & Integer'Image(getItemCount));
 		end;
 
+		-- Dequeue item from buffer
 		procedure dequeue(value : out Integer) is
 		begin
 			if not isEmpty then
@@ -74,6 +80,7 @@ procedure part4 is
 			Put_Line("Init BufferTask");
 		end Init;
 
+		-- Listen for finishing call and end the PutterTask
 		procedure Finish is
 		begin
 			finished := true;
@@ -100,12 +107,15 @@ procedure part4 is
 	begin 
 		Reset(g);
 		accept Init;
+
+		-- Run until finished, receiving call from BufferTask
 		while not finished loop
 			select
 				accept Finish do
 					finished := true;
 				end Finish;
 			or
+				-- Delay between 0 and 1 second
 				delay Duration(Random(g) * 1.0);
 				num := Integer(Random(g) * 25.0);
 				BufferTask.Put(num);
