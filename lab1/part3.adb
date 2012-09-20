@@ -57,7 +57,6 @@ procedure part3 is
 				lastItem := (lastItem + 1) mod 10;
 				itemCount := itemCount + 1;
 			end if;
-			-- Put_Line("Items in queue:" & Integer'Image(getItemCount));
 		end;
 
 		-- Dequeue element from buffer
@@ -68,7 +67,6 @@ procedure part3 is
 				firstItem := (firstItem + 1) mod 10;
 				itemCount := itemCount - 1;
 			end if;
-			-- Put_Line("Items in queue:" & Integer'Image(getItemCount));
 		end;
 
 	begin
