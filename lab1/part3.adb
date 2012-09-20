@@ -11,15 +11,23 @@ procedure part3 is
 	-- BufferTask
 	task BufferTask is
 		entry Init;
+		entry Finish;
 		entry Put(item : in Integer);
 		entry Get(item : out Integer);
 	end BufferTask;
+
+	-- PutterTask
+	task PutterTask is
+		entry Init;
+		entry Finish;
+	end PutterTask;
 
 	task body BufferTask is
 		buffer : Array(0..10) of Integer;
 		firstItem : Integer := 0;
 		lastItem : Integer := 0;
 		itemCount : Integer := 0;
+		finished : Boolean := false;
 		
 		function isFull return Boolean is
 		begin
@@ -58,7 +66,7 @@ procedure part3 is
 
 	begin
 		accept Init;
-		loop
+		while not finished loop
 			select
 				when not isFull =>
 					accept Put(item : in Integer) do
@@ -69,27 +77,37 @@ procedure part3 is
 					accept Get(item : out Integer) do
 						dequeue(item);
 					end Get;
+			or
+				accept Finish do
+					finished := true;
+					PutterTask.Finish;
+				end Finish;
 			end select;
 		end loop;
-	end BufferTask;
 
-	-- PutterTask
-	task PutterTask is
-		entry Init;
-	end PutterTask;
+		Put_Line("Buffertask is quitting");
+	end BufferTask;
 
 	task body PutterTask is
 		g : generator;
-		num : Integer range 0 .. 25;
+		num : Integer;
+		finished : Boolean := false;
 	begin 
 		Reset(g);
 		accept Init;
-		loop
-			delay Duration(Random(g) * 1.0);
-			num := Integer(Random(g) * 25.0);
-			BufferTask.Put(num);
-			Put_Line("Put:" & Integer'Image(num));
+		while not finished loop
+			select
+				accept Finish do
+					finished := true;
+				end Finish;
+			or
+				delay Duration(Random(g) * 1.0);
+				num := Integer(Random(g) * 25.0);
+				BufferTask.Put(num);
+				Put_Line("Put:" & Integer'Image(num));
+			end select;
 		end loop;
+		Put_Line("PutterTask is quitting");
 	end PutterTask;
 
 	-- GetterTask
@@ -104,16 +122,15 @@ procedure part3 is
 	begin
 		Reset(g);
 		accept Init;
-		loop
+		while sum < 100 loop
 			delay Duration(Random(g) * 2.0);
 			BufferTask.Get(value);
 			sum := sum + value;
-			Put_Line("Get:" & Integer'Image(value) & " sum:" & Integer'Image(sum));
-			
-			if sum > 100 then
-				Put_Line("Jesus-titty-fucking-christ I've reached ONE_HUNDRED!");
-			end if;
+			Put_Line("Get:" & Integer'Image(value) & ", Sum:" & Integer'Image(sum));
 		end loop;
+
+		BufferTask.Finish;
+		Put_Line("Gettertask is quitting");
 	end GetterTask;
 
 begin
