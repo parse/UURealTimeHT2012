@@ -1,0 +1,79 @@
+#include "implementation.oil"
+
+CPU ATMEL_AT91SAM7S256
+{
+  OS LEJOS_OSEK
+  {
+    STATUS = EXTENDED;
+    STARTUPHOOK = FALSE;
+    ERRORHOOK = FALSE;
+    SHUTDOWNHOOK = FALSE;
+    PRETASKHOOK = FALSE;
+    POSTTASKHOOK = FALSE;
+    USEGETSERVICEID = FALSE;
+    USEPARAMETERACCESS = FALSE;
+    USERESSCHEDULER = FALSE;
+  };
+
+  /* Definition of application mode */
+  APPMODE appmode1{};
+  
+  EVENT TouchOnEvent { MASK = AUTO; };
+  EVENT TouchOffEvent { MASK = AUTO; };
+  EVENT TableEdgeEvent { MASK = AUTO; };
+
+  TASK MotorcontrolTask
+  {
+    AUTOSTART = TRUE
+    {
+      APPMODE = appmode1;
+    };
+    EVENT = TouchOnEvent;
+    EVENT = TouchOffEvent;
+    EVENT = TableEdgeEvent;
+    PRIORITY = 2; /* Smaller value means lower priority */
+    ACTIVATION = 1;
+    SCHEDULE = FULL;
+    STACKSIZE = 512; /* Stack size */
+  };
+
+  TASK ButtonPressTask
+  {
+    AUTOSTART = FALSE;
+    PRIORITY = 1;
+    ACTIVATION = 1;
+    SCHEDULE = FULL;
+    STACKSIZE = 512; 
+  };
+
+    TASK DisplayTask
+  {
+    AUTOSTART = FALSE;
+    PRIORITY = 1;
+    ACTIVATION = 1;
+    SCHEDULE = FULL;
+    STACKSIZE = 512; 
+  };
+
+  COUNTER SysTimerCnt {
+    MINCYCLE = 1;
+    MAXALLOWEDVALUE = 10000;
+    TICKSPERBASE = 1;
+  };
+
+  ALARM cyclic_alarm {
+    COUNTER = SysTimerCnt ;
+    ACTION = ACTIVATETASK
+    {
+      TASK = ButtonPressTask;
+    };
+
+    AUTOSTART = TRUE
+    {
+      ALARMTIME = 1;
+      CYCLETIME = 10;
+      APPMODE = appmode1 ;
+    };
+  };
+
+};
