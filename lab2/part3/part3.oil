@@ -18,20 +18,10 @@ CPU ATMEL_AT91SAM7S256
   /* Definition of application mode */
   APPMODE appmode1{};
   
-  EVENT TouchOnEvent { MASK = AUTO; };
-  EVENT TouchOffEvent { MASK = AUTO; };
-  EVENT TableEdgeEvent { MASK = AUTO; };
-
   TASK MotorcontrolTask
   {
-    AUTOSTART = TRUE
-    {
-      APPMODE = appmode1;
-    };
-    EVENT = TouchOnEvent;
-    EVENT = TouchOffEvent;
-    EVENT = TableEdgeEvent;
-    PRIORITY = 2; /* Smaller value means lower priority */
+    AUTOSTART = FALSE;
+    PRIORITY = 1; /* Smaller value means lower priority */
     ACTIVATION = 1;
     SCHEDULE = FULL;
     STACKSIZE = 512; /* Stack size */
@@ -46,7 +36,7 @@ CPU ATMEL_AT91SAM7S256
     STACKSIZE = 512; 
   };
 
-    TASK DisplayTask
+  TASK DisplayTask
   {
     AUTOSTART = FALSE;
     PRIORITY = 1;
@@ -61,7 +51,22 @@ CPU ATMEL_AT91SAM7S256
     TICKSPERBASE = 1;
   };
 
-  ALARM cyclic_alarm {
+  ALARM cyclic_motor_alarm {
+    COUNTER = SysTimerCnt ;
+    ACTION = ACTIVATETASK
+    {
+      TASK = MotorcontrolTask;
+    };
+
+    AUTOSTART = TRUE
+    {
+      ALARMTIME = 1;
+      CYCLETIME = 50;
+      APPMODE = appmode1 ;
+    };
+  };
+
+  ALARM cyclic_button_alarm {
     COUNTER = SysTimerCnt ;
     ACTION = ACTIVATETASK
     {
@@ -75,5 +80,20 @@ CPU ATMEL_AT91SAM7S256
       APPMODE = appmode1 ;
     };
   };
+
+  ALARM cyclic_display_alarm {
+    COUNTER = SysTimerCnt ;
+    ACTION = ACTIVATETASK
+    {
+      TASK = DisplayTask;
+    };
+
+    AUTOSTART = TRUE
+    {
+      ALARMTIME = 1;
+      CYCLETIME = 10;
+      APPMODE = appmode1 ;
+    };
+  };  
 
 };
