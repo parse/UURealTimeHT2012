@@ -18,12 +18,18 @@ CPU ATMEL_AT91SAM7S256
   /* Definition of application mode */
   APPMODE appmode1{};
   
+  RESOURCE dcResource
+  {
+    RESOURCEPROPERTY = STANDARD;
+  };
+
   TASK MotorcontrolTask
   {
     AUTOSTART = FALSE;
     PRIORITY = 1; /* Smaller value means lower priority */
     ACTIVATION = 1;
     SCHEDULE = FULL;
+    RESOURCE = dcResource;
     STACKSIZE = 512; /* Stack size */
   };
 
@@ -33,6 +39,17 @@ CPU ATMEL_AT91SAM7S256
     PRIORITY = 1;
     ACTIVATION = 1;
     SCHEDULE = FULL;
+    RESOURCE = dcResource;
+    STACKSIZE = 512; 
+  };
+
+  TASK DistanceTask
+  {
+    AUTOSTART = FALSE;
+    PRIORITY = 1;
+    ACTIVATION = 1;
+    SCHEDULE = FULL;
+    RESOURCE = dcResource;
     STACKSIZE = 512; 
   };
 
@@ -42,6 +59,7 @@ CPU ATMEL_AT91SAM7S256
     PRIORITY = 1;
     ACTIVATION = 1;
     SCHEDULE = FULL;
+    RESOURCE = dcResource;
     STACKSIZE = 512; 
   };
 
@@ -52,7 +70,7 @@ CPU ATMEL_AT91SAM7S256
   };
 
   ALARM cyclic_motor_alarm {
-    COUNTER = SysTimerCnt ;
+    COUNTER = SysTimerCnt;
     ACTION = ACTIVATETASK
     {
       TASK = MotorcontrolTask;
@@ -62,12 +80,12 @@ CPU ATMEL_AT91SAM7S256
     {
       ALARMTIME = 1;
       CYCLETIME = 50;
-      APPMODE = appmode1 ;
+      APPMODE = appmode1;
     };
   };
 
   ALARM cyclic_button_alarm {
-    COUNTER = SysTimerCnt ;
+    COUNTER = SysTimerCnt;
     ACTION = ACTIVATETASK
     {
       TASK = ButtonPressTask;
@@ -77,12 +95,12 @@ CPU ATMEL_AT91SAM7S256
     {
       ALARMTIME = 1;
       CYCLETIME = 10;
-      APPMODE = appmode1 ;
+      APPMODE = appmode1;
     };
   };
 
   ALARM cyclic_display_alarm {
-    COUNTER = SysTimerCnt ;
+    COUNTER = SysTimerCnt;
     ACTION = ACTIVATETASK
     {
       TASK = DisplayTask;
@@ -91,8 +109,23 @@ CPU ATMEL_AT91SAM7S256
     AUTOSTART = TRUE
     {
       ALARMTIME = 1;
-      CYCLETIME = 10;
-      APPMODE = appmode1 ;
+      CYCLETIME = 100;
+      APPMODE = appmode1;
+    };
+  };  
+
+  ALARM distance_alarm {
+    COUNTER = SysTimerCnt;
+    ACTION = ACTIVATETASK
+    {
+      TASK = DistanceTask;
+    };
+
+    AUTOSTART = TRUE
+    {
+      ALARMTIME = 1;
+      CYCLETIME = 100;
+      APPMODE = appmode1;
     };
   };  
 
