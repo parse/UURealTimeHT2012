@@ -1,0 +1,141 @@
+#include "implementation.oil"
+
+CPU ATMEL_AT91SAM7S256
+{
+  OS LEJOS_OSEK
+  {
+    STATUS = EXTENDED;
+    STARTUPHOOK = FALSE;
+    ERRORHOOK = FALSE;
+    SHUTDOWNHOOK = FALSE;
+    PRETASKHOOK = FALSE;
+    POSTTASKHOOK = FALSE;
+    USEGETSERVICEID = FALSE;
+    USEPARAMETERACCESS = FALSE;
+    USERESSCHEDULER = FALSE;
+  };
+
+  EVENT DataUpdated { MASK = AUTO; };
+  EVENT StartCalibrate { MASK = AUTO; };
+  EVENT StartRunning { MASK = AUTO; };
+
+  /* Definition of application mode */
+  APPMODE appmode1{};
+  
+  RESOURCE dcResource
+  {
+    RESOURCEPROPERTY = STANDARD;
+  };
+
+  TASK MotorcontrolTask
+  {
+    AUTOSTART = TRUE {
+      APPMODE = appmode1;
+    };
+
+    PRIORITY = 3; /* Smaller value means lower priority */
+    ACTIVATION = 1;
+    EVENT = DataUpdated;
+    EVENT = StartRunning;
+    SCHEDULE = FULL;
+    RESOURCE = dcResource;
+    STACKSIZE = 512; /* Stack size */
+  };
+
+  TASK UltraTask
+  {
+    AUTOSTART = FALSE;
+    PRIORITY = 2;
+    ACTIVATION = 1;
+    SCHEDULE = FULL;
+    RESOURCE = dcResource;
+    STACKSIZE = 512; 
+  };
+
+  TASK ButtonPressTask
+  {
+    AUTOSTART = FALSE;
+    PRIORITY = 1;
+    ACTIVATION = 1;
+    SCHEDULE = FULL;
+    RESOURCE = dcResource;
+    STACKSIZE = 512; 
+  };
+
+  TASK CalibrateTask
+  {
+    AUTOSTART = TRUE
+    {
+      APPMODE = appmode1;
+    };
+    PRIORITY = 1;
+    ACTIVATION = 1;
+    EVENT = StartCalibrate;
+    SCHEDULE = FULL;
+    RESOURCE = dcResource;
+    STACKSIZE = 512; 
+  };
+
+  TASK LightTask
+  {
+    AUTOSTART = FALSE;
+    PRIORITY = 1;
+    ACTIVATION = 1;
+    SCHEDULE = FULL;
+    RESOURCE = dcResource;
+    STACKSIZE = 512; 
+  };
+
+  COUNTER SysTimerCnt {
+    MINCYCLE = 1;
+    MAXALLOWEDVALUE = 10000;
+    TICKSPERBASE = 1;
+  }; 
+
+  ALARM cyclic_button_alarm {
+    COUNTER = SysTimerCnt;
+    ACTION = ACTIVATETASK
+    {
+      TASK = ButtonPressTask;
+    };
+
+    AUTOSTART = TRUE
+    {
+      ALARMTIME = 1;
+      CYCLETIME = 100;
+      APPMODE = appmode1;
+    };
+  };
+
+
+  ALARM ultra_alarm {
+    COUNTER = SysTimerCnt;
+    ACTION = ACTIVATETASK
+    {
+      TASK = UltraTask;
+    };
+
+    AUTOSTART = TRUE
+    {
+      ALARMTIME = 1;
+      CYCLETIME = 150;
+      APPMODE = appmode1;
+    };
+  };  
+
+  ALARM light_alarm {
+    COUNTER = SysTimerCnt;
+    ACTION = ACTIVATETASK
+    {
+      TASK = LightTask;
+    };
+
+    AUTOSTART = TRUE
+    {
+      ALARMTIME = 1;
+      CYCLETIME = 30;
+      APPMODE = appmode1;
+    };
+  };  
+
+};
