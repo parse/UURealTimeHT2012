@@ -17,7 +17,8 @@ CPU ATMEL_AT91SAM7S256
 
   /* Definition of application mode */
   APPMODE appmode1{};
-  
+
+  /* Declaration of the events that the MotorcontrolTask responds to. */  
   EVENT TouchOnEvent { MASK = AUTO; };
   EVENT TouchOffEvent { MASK = AUTO; };
   EVENT TableEdgeEvent { MASK = AUTO; };
@@ -46,12 +47,14 @@ CPU ATMEL_AT91SAM7S256
     STACKSIZE = 512; 
   };
 
+  /* Declaration of the counter, it is used by the alarm to trigger the EventdispatcherTask */
   COUNTER SysTimerCnt {
     MINCYCLE = 1;
     MAXALLOWEDVALUE = 10000;
     TICKSPERBASE = 1;
   };
 
+  /* An alarm that runs the EventdispatcherTask every 10 ms. */
   ALARM cyclic_alarm {
     COUNTER = SysTimerCnt ;
     ACTION = ACTIVATETASK

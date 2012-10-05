@@ -28,12 +28,14 @@ CPU ATMEL_AT91SAM7S256
     STACKSIZE = 512; /* Stack size */
   };
 
+/* Declaration of the counter, it is used by the alarm to trigger the HelloworldTask */
   COUNTER SysTimerCnt {
     MINCYCLE = 1;
     MAXALLOWEDVALUE = 10000;
     TICKSPERBASE = 1;
   };
 
+/* An alarm that runs the HelloworldTask every 100 ms. */
   ALARM cyclic_alarm {
     COUNTER = SysTimerCnt ;
     ACTION = ACTIVATETASK

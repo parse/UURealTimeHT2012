@@ -18,11 +18,13 @@ CPU ATMEL_AT91SAM7S256
   /* Definition of application mode */
   APPMODE appmode1{};
   
+  /* Global resource used by all tasks to synchronize usage of the dc data struct (see c-file) */
   RESOURCE dcResource
   {
     RESOURCEPROPERTY = STANDARD;
   };
 
+  /* Task to control the motors */
   TASK MotorcontrolTask
   {
     AUTOSTART = FALSE;
@@ -33,6 +35,7 @@ CPU ATMEL_AT91SAM7S256
     STACKSIZE = 512; /* Stack size */
   };
 
+  /* Task to handle button press */
   TASK ButtonPressTask
   {
     AUTOSTART = FALSE;
@@ -43,6 +46,7 @@ CPU ATMEL_AT91SAM7S256
     STACKSIZE = 512; 
   };
 
+  /* Task to read the distance */
   TASK DistanceTask
   {
     AUTOSTART = FALSE;
@@ -53,6 +57,7 @@ CPU ATMEL_AT91SAM7S256
     STACKSIZE = 512; 
   };
 
+  /* Task to display information on screen */
   TASK DisplayTask
   {
     AUTOSTART = FALSE;
@@ -63,12 +68,14 @@ CPU ATMEL_AT91SAM7S256
     STACKSIZE = 512; 
   };
 
+  /* Declaration of the counter, it is used by the alarm to trigger all tasks */
   COUNTER SysTimerCnt {
     MINCYCLE = 1;
     MAXALLOWEDVALUE = 10000;
     TICKSPERBASE = 1;
   };
 
+  /* An alarm that runs the MotorcontrolTask every 50 ms. */
   ALARM cyclic_motor_alarm {
     COUNTER = SysTimerCnt;
     ACTION = ACTIVATETASK
@@ -84,6 +91,7 @@ CPU ATMEL_AT91SAM7S256
     };
   };
 
+  /* An alarm that runs the ButtonPressTask every 10 ms. */
   ALARM cyclic_button_alarm {
     COUNTER = SysTimerCnt;
     ACTION = ACTIVATETASK
@@ -99,6 +107,7 @@ CPU ATMEL_AT91SAM7S256
     };
   };
 
+  /* An alarm that runs the DisplayTask every 100 ms. */
   ALARM cyclic_display_alarm {
     COUNTER = SysTimerCnt;
     ACTION = ACTIVATETASK
@@ -114,6 +123,7 @@ CPU ATMEL_AT91SAM7S256
     };
   };  
 
+  /* An alarm that runs the DistanceTask every 100 ms. */
   ALARM distance_alarm {
     COUNTER = SysTimerCnt;
     ACTION = ACTIVATETASK
