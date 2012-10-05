@@ -12,7 +12,7 @@
 #define BACK_OFF_PERIOD 1000
 #define DISTANCE_GOAL 30 //strive to have 32 at the distance reader always
 
-#define PORT_TOUCH NXT_PORT_S1
+#define PORT_TOUCH NXT_PORT_S4
 #define PORT_LIGHT NXT_PORT_S2
 #define PORT_ULTRA NXT_PORT_S3
 #define PORT_MOTOR_1 NXT_PORT_B
@@ -93,23 +93,28 @@ TASK(ButtonPressTask)
 
 TASK(DistanceTask)
 {
-	GetResource(dcResource);
+	if (dc.priority <= PRIO_DIST) {
+		S16 distance = ecrobot_get_sonar_sensor(PORT_ULTRA);
+		S16 diff = distance - 32;
 
-	// If the distance reader priority is higher than the currently running prio, get readings and calibrate motor speed.
-	if (dc.priority < PRIO_DIST) {
-		int distance = ecrobot_get_sonar_sensor(PORT_ULTRA);
-		int speed = distance - DISTANCE_GOAL;
+		if(distance == -1)
+			diff = 100;
+
+		if(!diff)
+			TerminateTask();
+
+		int speed = diff * 100 / 15;
+
+		if(speed > 100)
+			speed = 100;
+		else if(speed < -100)
+			speed = -100;
+
 		GetResource(dcResource);
-		dc.distance = distance;
+		change_driving_command(PRIO_DIST, speed, 150);
 		ReleaseResource(dcResource);
-
-		// if the speed is negative, we back off, if it is positive we drive forward. If speed is 0 (we are at our target distance) we dont run.
-		if (speed != 0) {
-			change_driving_command(PRIO_DIST, speed, 200);	
-		}
 	}
 
-	ReleaseResource(dcResource);
 	TerminateTask();
 }
 
