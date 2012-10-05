@@ -3,9 +3,9 @@
 #include "kernel_id.h"
 #include "ecrobot_interface.h"
 
-#define DISTANCE_GOAL 30 //strive to have 32 at the distance reader always
+#define DISTANCE_GOAL 35 //strive to have 32 at the distance reader always
 
-#define PORT_TOUCH NXT_PORT_S1
+#define PORT_TOUCH NXT_PORT_S4
 #define PORT_LIGHT NXT_PORT_S2
 #define PORT_ULTRA NXT_PORT_S3
 #define PORT_MOTOR_1 NXT_PORT_B
