@@ -65,7 +65,7 @@ int minBrightness = 0;
 
 TASK(EventdispatcherTask)
 {
-	int touch = ecrobot_get_touch_sensor(NXT_PORT_S1);
+	int touch = ecrobot_get_touch_sensor(NXT_PORT_S4);
 	int light = ecrobot_get_light_sensor(NXT_PORT_S2);
 
 	if (light > 600) {
